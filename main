@@ -1,0 +1,59 @@
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+// Your code here!
+
+function skyline(arrayInput){      // Input Array: [ [left, rigth, heigth ]  ] Entrada del array incial, todos los edificios posibles en cualquier orden
+    const limR = arrayInput.sort( (a,b) => b[1] - a[1])[0][1];                      // Límite R
+    const limL = arrayInput.sort( (a,b) => a[0] - b[0])[0][0];                      // Límite L
+    
+    let arrayOutput = [];
+    let hAct = 0;
+    
+    for(let i = limL; i <= limR + 1; i++){
+        let arrayHL = [0];
+        let arrayHR = [0];
+        for (let j = 0; j < arrayInput.length; j++){                            // Altura máxima de inicio y fin de un edificio en cada punto
+            if( i === arrayInput[j][0]){
+                arrayHL.push( arrayInput[j][2] );
+            }
+            if( i === arrayInput[j][1]){
+                arrayHR.push( arrayInput[j][2] );
+            }
+        }
+        let maxL = Math.max( ...arrayHL );
+        let maxR = Math.max( ...arrayHR );
+        
+        arrayInput.sort( (a,b) => b[2] - a[2] );
+        
+        if (hAct < maxL){                                                       // Nuevo edificio, creación de punto
+            arrayOutput.push([ i, maxL]);
+            hAct = maxL;
+        }else if( hAct === maxR && hAct > maxL){                                                            // Fin de edificio, creación de punto
+            //console.log(i, hAct, maxL, maxR);
+            for (let j = 0; j < arrayInput.length; j++){
+                if ( ( arrayInput[j][0] <= i && arrayInput[j][1] > i ) && arrayInput[j][2] < hAct ){
+                    hAct = arrayInput[j][2];
+                    arrayOutput.push([ i, hAct]);
+                    break;
+                }
+                if (j === arrayInput.length - 1){
+                    arrayOutput.push([ i, 0]);
+                    hAct = 0;
+                }
+            }
+        }
+        
+        
+    }
+    //console.log('L:', arr0, 'R:', arr1);
+    
+    //console.log(arrayOutput);
+    //console.log(arrayInput);
+    
+    return arrayOutput;
+}
+const myArray = [[2, 9, 10], [3, 6, 15], [5, 10, 12], [10, 12, 12], [13, 16, 12], [15, 17, 5] , [2, 4, 5]];
+console.log(myArray);
+
+const mySkyline = skyline(myArray);
+console.log(mySkyline);
